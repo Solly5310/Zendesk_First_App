@@ -11,9 +11,46 @@
    <link href = "main.css" rel="stylesheet">
 </head>
 <body>
+
+  <div id="content"></div>
+
+<!-- Here is the scripting used through Handlebards templating -->
+
+
   <footer>
     <a href="https://github.com/Solly5310/Zendesk_First_App" target="_blank">Report bugs</a>
   </footer>
+
+  <script id="requester-template" type="text/x-handlebars-template">
+    <table>
+    <tr>
+      <td>Customer:</td>
+      <!-- variable for customer name in ticket-->
+      <td class="data">{{name}}</td>
+    </tr>
+    <!-- Conditional set to display tags if there is at least 1 tag (Array length > 0) -->
+    {{#if tags}}
+    <tr>
+      <td>Tags:</td>
+      <td class="data">{{#each tags}}{{this}} {{/each}}</td>
+    </tr>
+    {{/if}}
+    <tr>
+      <td>Added:</td>
+      <td class="data">{{created_at}}</td>
+    </tr>
+    <tr>
+      <td>Last signed in:</td>
+      <td class="data">{{last_login_at}}</td>
+    </tr>
+    </table>
+  </script>
+  
+
+  <!-- Template used for error reporting -->
+  <script id="error-template" type="text/x-handlebars-template">
+    <p>{{status}} - {{statusText}} error. Please report a bug at the link below.</p>
+  </script>
 
   <!-- Jquery -->
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>

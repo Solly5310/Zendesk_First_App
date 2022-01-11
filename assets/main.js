@@ -1,5 +1,5 @@
 $(function() {
-   // the code here initialises the zendesk session with the app
+   // The code here initialises the zendesk session with the app
    // There are many functions which can be applied to the client variable
    var client = ZAFClient.init();
    client.invoke('resize', { width: '100%', height: '120px' });
@@ -11,12 +11,13 @@ $(function() {
     })
  });
  
- function showInfo() {
+ function showInfo(data) {
   var requester_data = {
-    'name': 'Jane Doe',
-    'tags': ['tag1', 'tag2'],
-    'created_at': 'November 20, 2014',
-    'last_login_at': 'June 27, 2016'
+    //Passes the data element, which is the user data object, drilling down to the specific user variables needed
+    'name': data.user.name,
+    'tags': data.user.tags,
+    'created_at': formatDate(data.user.created_at),
+    'last_login_at': formatDate(data.user.last_login_at)
   };
 
   var source = $("#requester-template").html();
@@ -26,10 +27,10 @@ $(function() {
 }
 
 
-function showError() {
+function showError(response) {
   var error_data = {
-    'status': 404,
-    'statusText': 'Not found'
+    'status': response.status,
+    'statusText': response.statusText
   };
   var source = $("#error-template").html();
   var template = Handlebars.compile(source);
@@ -37,7 +38,7 @@ function showError() {
   $("#content").html(html);
 }
 
-//function to get user id from Zendesk REST API
+//Function to get user id from Zendesk REST API
 function requestUserInfo(client, id) {
   var settings = {
     url: '/api/v2/users/' + id + '.json',
@@ -47,10 +48,23 @@ function requestUserInfo(client, id) {
 //Either displays customer data or error response
   client.request(settings).then(
     function(data) {
-      console.log(data);
+      showInfo(data);
     },
     function(response) {
-      console.error(response);
+      showError(response);
     }
   );
+}
+
+function formatDate(date) {
+  // Formates date info into an object,
+  var cdate = new Date(date);
+  var options = {
+    year: "numeric",
+    month: "short",
+    day: "numeric"
+  };
+  // The object is then converted into a string 
+  date = cdate.toLocaleDateString("en-us", options);
+  return date;
 }
